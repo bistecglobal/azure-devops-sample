@@ -17,7 +17,13 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
-  
+
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+    includePreviewVersions: true
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
