@@ -28,3 +28,14 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: "14.x"
+  displayName: "Install Node.js"
+  
+- script: |
+    cd ./Client
+    npm install
+    npm run build
+  displayName: "npm install and build"
