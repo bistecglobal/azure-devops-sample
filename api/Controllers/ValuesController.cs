@@ -8,7 +8,7 @@ namespace api
     {
         public string[] Get()
         {
-            return new string [] { "SAMPLE 1", "SAMPLE 2" };
+            return new string [] { "Azure DevOps", "Kubernetes" };
         }
     }
 }
