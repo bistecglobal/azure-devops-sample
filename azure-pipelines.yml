@@ -97,7 +97,7 @@ stages:
             azureSubscription: 'MPN'
             appType: 'webAppLinux'
             WebAppName: 'quality-circle-api'
-            packageForLinux: '$(System.DefaultWorkingDirectory)/**/api.zip'
+            packageForLinux: '$(Pipeline.Workspace)/drop/Release/api.zip'
             RuntimeStack: 'DOTNETCORE|6.0'
 
 
