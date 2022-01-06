@@ -4,61 +4,61 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  - main
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: echo Hello, world!
+    displayName: "Run a one-line script"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: "Run a multi-line script"
 
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '6.0.x'
-    includePreviewVersions: true
+  - task: UseDotNet@2
+    inputs:
+      packageType: "sdk"
+      version: "6.0.x"
+      includePreviewVersions: true
 
-- task: SonarQubePrepare@5
-  inputs:
-    SonarQube: 'Sonar Bistec'
-    scannerMode: 'MSBuild'
-    projectKey: 'devops-sample-backend'
-    projectName: 'devops sample backend'
-    extraProperties: |
-      sonar.sources=api
-      sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+  - task: SonarQubePrepare@5
+    inputs:
+      SonarQube: "Sonar Bistec"
+      scannerMode: "MSBuild"
+      projectKey: "devops-sample-backend"
+      projectName: "devops sample backend"
+      extraProperties: |
+        sonar.sources=api
+        sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: "build"
+      projects: "**/*.csproj"
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'test'
-    projects: '**/*.tests.csproj'
-    arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
-  displayName: 'Run Tests'
-  
-- task: SonarQubeAnalyze@5
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: "test"
+      projects: "**/*.tests.csproj"
+      arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+    displayName: "Run Tests"
 
-- task: SonarQubePublish@5
-  inputs:
-    pollingTimeoutSec: '300'
+  - task: SonarQubeAnalyze@5
 
-- task: NodeTool@0
-  inputs:
-    versionSpec: "14.x"
-  displayName: "Install Node.js"
+  - task: SonarQubePublish@5
+    inputs:
+      pollingTimeoutSec: "300"
 
-- script: |
-    cd ./client
-    npm install
-    npm run build
-  displayName: "npm install and build"
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "14.x"
+    displayName: "Install Node.js"
+
+  - script: |
+      cd ./client
+      npm install
+      npm run build
+    displayName: "npm install and build"
