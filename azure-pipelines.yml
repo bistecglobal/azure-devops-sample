@@ -49,6 +49,10 @@ steps:
     cliProjectKey: 'DevOps-frontend'
     cliProjectName: 'DevOps-frontend'
     cliSources: './client'
+    extraProperties: |
+      # Additional properties that will be passed to the scanner, 
+      # Put one key=value per line, example:
+      sonar.branch.name=main
 
 - script: |
     cd ./client
