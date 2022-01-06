@@ -50,7 +50,7 @@ steps:
   - task: AzureResourceManagerTemplateDeployment@3
     inputs:
       deploymentScope: 'Resource Group'
-      azureResourceManagerConnection: 'Visual Studio Enterprise Subscription – MPN(f31e1ef4-3413-4efa-9e74-9ce83c808c57)'
+      azureResourceManagerConnection: 'MPN'
       subscriptionId: 'f31e1ef4-3413-4efa-9e74-9ce83c808c57'
       action: 'Create Or Update Resource Group'
       resourceGroupName: 'QualityCircle-Demo'
