@@ -6,56 +6,87 @@
 trigger:
   - main
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+  - stage: "Build"
+    displayName: "Build"
+    jobs:
+      - job: build
+        displayName: build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - script: echo Hello, world!
+          displayName: "Run a one-line script"
 
-steps:
-  - script: echo Hello, world!
-    displayName: "Run a one-line script"
+        - script: |
+            echo Add other tasks to build, test, and deploy your project.
+            echo See https://aka.ms/yaml
+          displayName: "Run a multi-line script"
 
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-    displayName: "Run a multi-line script"
+        - task: UseDotNet@2
+          inputs:
+            packageType: "sdk"
+            version: "6.0.x"
+            includePreviewVersions: true
 
-  - task: UseDotNet@2
-    inputs:
-      packageType: "sdk"
-      version: "6.0.x"
-      includePreviewVersions: true
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: "build"
+            projects: "**/*.csproj"
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: "build"
-      projects: "**/*.csproj"
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: "test"
+            projects: "**/*.tests.csproj"
+            arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+          displayName: "Run Tests"
+         
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'publish'
+            publishWebProjects: true
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: "test"
-      projects: "**/*.tests.csproj"
-      arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
-    displayName: "Run Tests"
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "14.x"
+          displayName: "Install Node.js"
 
-  - task: NodeTool@0
-    inputs:
-      versionSpec: "14.x"
-    displayName: "Install Node.js"
+        - script: |
+            cd ./client
+            npm install
+            npm run build
+          displayName: "npm install and build"
 
-  - script: |
-      cd ./client
-      npm install
-      npm run build
-    displayName: "npm install and build"
+  - stage: "Deploy"
+    displayName: "Deploy"
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: AzureResourceManagerTemplateDeployment@3
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: 'MPN'
+            subscriptionId: 'f31e1ef4-3413-4efa-9e74-9ce83c808c57'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: 'QualityCircle-Demo'
+            location: 'Central US'
+            templateLocation: 'Linked artifact'
+            csmFile: 'templates/template.json'
+            csmParametersFile: 'templates/parameters.json'
+            deploymentMode: 'Incremental' 
+            
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'MPN'
+            appType: 'webAppLinux'
+            WebAppName: 'quality-circle-api'
+            packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+            RuntimeStack: 'DOTNETCORE|6.0'
 
-  - task: AzureResourceManagerTemplateDeployment@3
-    inputs:
-      deploymentScope: 'Resource Group'
-      azureResourceManagerConnection: 'MPN'
-      subscriptionId: 'f31e1ef4-3413-4efa-9e74-9ce83c808c57'
-      action: 'Create Or Update Resource Group'
-      resourceGroupName: 'QualityCircle-Demo'
-      location: 'Central US'
-      templateLocation: 'Linked artifact'
-      csmFile: 'templates/template.json'
-      csmParametersFile: 'templates/parameters.json'
-      deploymentMode: 'Incremental'
+
+
+
