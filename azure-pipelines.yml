@@ -29,6 +29,13 @@ steps:
     command: 'build'
     projects: '**/*.csproj'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*.tests.csproj'
+    arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
+  displayName: 'Run Tests'
+
 - task: NodeTool@0
   inputs:
     versionSpec: "14.x"
