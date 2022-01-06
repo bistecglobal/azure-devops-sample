@@ -24,6 +24,16 @@ steps:
     version: '6.0.x'
     includePreviewVersions: true
 
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'Sonar Bistec'
+    scannerMode: 'MSBuild'
+    projectKey: 'devops-sample-backend'
+    projectName: 'devops sample backend'
+    extraProperties: |
+      sonar.sources=api
+      sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
@@ -35,33 +45,20 @@ steps:
     projects: '**/*.tests.csproj'
     arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=opencover'
   displayName: 'Run Tests'
+  
+- task: SonarQubeAnalyze@4
+
+- task: SonarQubePublish@4
+  inputs:
+    pollingTimeoutSec: '300'
 
 - task: NodeTool@0
   inputs:
     versionSpec: "14.x"
   displayName: "Install Node.js"
 
-- task: SonarQubePrepare@4
-  inputs:
-    SonarQube: 'Sonar'
-    scannerMode: 'CLI'
-    configMode: 'manual'
-    cliProjectKey: 'DevOps-frontend'
-    cliProjectName: 'DevOps-frontend'
-    cliSources: './client'
-    extraProperties: |
-      # Additional properties that will be passed to the scanner, 
-      # Put one key=value per line, example:
-      sonar.branch.name=main
-
 - script: |
     cd ./client
     npm install
     npm run build
   displayName: "npm install and build"
-
-- task: SonarQubeAnalyze@4
-
-- task: SonarQubePublish@4
-  inputs:
-    pollingTimeoutSec: '300'
