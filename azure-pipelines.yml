@@ -35,8 +35,8 @@ stages:
             SonarCloud: 'SonarCloud'
             organization: 'chan4lk'
             scannerMode: 'MSBuild'
-            projectKey: 'devops-demo'
-            projectName: 'devops-demo'
+            projectKey: 'bistec-quality-circle-demo'
+            projectName: 'bistec-quality-circle-demo'
             extraProperties: |
                 sonar.sources=api
                 sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
