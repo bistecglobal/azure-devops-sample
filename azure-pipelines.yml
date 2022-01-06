@@ -38,7 +38,6 @@ stages:
             projectKey: 'bistec-quality-circle-demo'
             projectName: 'bistec-quality-circle-demo'
             extraProperties: |
-                sonar.sources=api
                 sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
 
         - task: DotNetCoreCLI@2
