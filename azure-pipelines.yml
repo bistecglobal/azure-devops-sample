@@ -70,12 +70,17 @@ stages:
 
   - stage: "Deploy"
     displayName: "Deploy"
+    dependsOn: Build
     jobs:
       - job: Deploy
         displayName: Deploy
         pool:
           vmImage: ubuntu-latest
         steps:
+        
+        - download: current
+          artifact: drop
+          
         - task: AzureResourceManagerTemplateDeployment@3
           displayName: Deploy ARM Template
           inputs:
