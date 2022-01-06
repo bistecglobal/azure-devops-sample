@@ -40,9 +40,24 @@ steps:
   inputs:
     versionSpec: "14.x"
   displayName: "Install Node.js"
-  
+
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'Sonar'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'DevOps-frontend'
+    cliProjectName: 'DevOps-frontend'
+    cliSources: './client'
+
 - script: |
     cd ./client
     npm install
     npm run build
   displayName: "npm install and build"
+
+- task: SonarQubeAnalyze@5
+
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
