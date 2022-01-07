@@ -16,8 +16,23 @@ steps:
   inputs:
     packageType: sdk
     version: 6.0.x
+
+- task: UseNode@1
+  displayName: Install Node
+  inputs:
+   version: 14.x    
   
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'client'
+    
+- task: Npm@1
+  inputs:
+    command: 'build'
+    workingDir: 'client'
