@@ -89,18 +89,6 @@
                 "Tier": "[parameters('sku')]",
                 "Name": "[parameters('skuCode')]"
             }
-        },
-        {
-            "apiVersion": "2019-12-01-preview",
-            "name": "[parameters('uiName')]",
-            "type": "Microsoft.Web/staticSites",
-            "location": "[parameters('location')]",
-            "tags": null,
-            "properties": {},
-            "sku": {
-                "Tier": "[parameters('uiSku')]",
-                "Name": "[parameters('uiSkuCode')]"
-            }
-        }
+        }        
     ]
 }
