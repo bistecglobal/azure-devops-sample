@@ -91,8 +91,9 @@ stages:
         displayName: Deploy
         pool:
           vmImage: ubuntu-latest
-        steps:
-        
+        variables:
+          - group: Dev
+        steps:        
         - download: current
           artifact: drop
           
