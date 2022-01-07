@@ -77,6 +77,8 @@ stages:
     jobs:
       - job: Deploy
         displayName: Deploy Job
+        variables:
+          group: Dev
         pool:
           vmImage: ubuntu-latest
 
@@ -108,4 +110,10 @@ stages:
             appType: 'webAppLinux'
             WebAppName: 'quality-circle-api'
             packageForLinux: '$(System.ArtifactsDirectory)/**/api.zip'
-          
+
+        - task: AzureStaticWebApp@0
+          inputs:
+            app_location: 'client'
+            output_location: 'build'
+            azure_static_web_apps_api_token: '$(deployment_token)'
+        
