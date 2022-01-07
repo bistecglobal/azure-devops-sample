@@ -32,6 +32,18 @@ stages:
             command: 'build'
             projects: '**/*.csproj'
            
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            projects: '*/*.csproj'
+            arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
+            
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
 
       - job: BuildUI
         pool:
@@ -48,3 +60,35 @@ stages:
             command: 'custom'
             workingDir: 'client'
             customCommand: 'build'
+
+  - stage: "Deploy"
+    jobs:       
+      - job: BuildUI
+        pool:
+          vmImage: ubuntu-latest
+
+        steps:
+        
+        - download: current
+          artifact: drop
+
+        - task: AzureResourceManagerTemplateDeployment@3
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: 'MPN'
+            subscriptionId: 'f31e1ef4-3413-4efa-9e74-9ce83c808c57'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: 'QualityCircle-Demo'
+            location: 'Central US'
+            templateLocation: 'Linked artifact'
+            csmFile: 'templates/template.json'
+            csmParametersFile: 'templates/parameters.json'
+            deploymentMode: 'Incremental'
+          
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'MPN'
+            appType: 'webAppLinux'
+            WebAppName: 'quality-circle-api'
+            packageForLinux: '$(Pipeline.Workspace)/drop/Release/api.zip'
