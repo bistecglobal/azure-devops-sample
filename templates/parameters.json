@@ -24,9 +24,15 @@
             "value": true
         },
         "sku": {
-            "value": "Free"
+            "value": "PremiumV2"
         },
         "skuCode": {
+            "value": "P1v2"
+        },
+        "uiSku": {
+            "value": "Free"
+        },
+        "uiSkuCode": {
             "value": "Free"
         },
         "workerSize": {

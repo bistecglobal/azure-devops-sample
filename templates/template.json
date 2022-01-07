@@ -29,6 +29,12 @@
         "skuCode": {
             "type": "string"
         },
+        "uiSku": {
+            "type": "string"
+        },
+        "uiSkuCode": {
+            "type": "string"
+        },
         "workerSize": {
             "type": "string"
         },
@@ -92,8 +98,8 @@
             "tags": null,
             "properties": {},
             "sku": {
-                "Tier": "[parameters('sku')]",
-                "Name": "[parameters('skuCode')]"
+                "Tier": "[parameters('uiSku')]",
+                "Name": "[parameters('uiSkuCode')]"
             }
         }
     ]
