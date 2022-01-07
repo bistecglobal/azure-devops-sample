@@ -11,8 +11,8 @@ stages:
   - stage: Build
     displayName: Build Stage
     jobs:
-      - job: Build
-        displayName: Build Job
+      - job: BuildAPI
+        displayName: Build API Job
         pool:
           vmImage: ubuntu-latest
 
@@ -21,12 +21,7 @@ stages:
           displayName: Install .net 6
           inputs:
             packageType: sdk
-            version: 6.0.x
-
-        - task: UseNode@1
-          displayName: Install Node
-          inputs:
-           version: 14.x    
+            version: 6.0.x        
           
         - task: DotNetCoreCLI@2
           displayName: Build .Net
@@ -39,7 +34,18 @@ stages:
           inputs:
             command: 'test'
             projects: '**/*.tests.csproj'
-            arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+            arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"        
+            
+      - job: BuildUI
+        displayName: Build UI
+        pool:
+          vmImage: ubuntu-latest
+
+        steps:
+        - task: UseNode@1
+          displayName: Install Node
+          inputs:
+           version: 14.x    
 
         - task: Npm@1
           displayName: Install node modules
