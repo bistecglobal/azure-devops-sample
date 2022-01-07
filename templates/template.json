@@ -8,6 +8,9 @@
         "name": {
             "type": "string"
         },
+        "uiName": {
+            "type": "string"
+        },
         "location": {
             "type": "string"
         },
@@ -76,6 +79,18 @@
                 "reserved": true,
                 "zoneRedundant": false
             },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            }
+        },
+        {
+            "apiVersion": "2019-12-01-preview",
+            "name": "[parameters('uiName')]",
+            "type": "Microsoft.Web/staticSites",
+            "location": "[parameters('location')]",
+            "tags": null,
+            "properties": {},
             "sku": {
                 "Tier": "[parameters('sku')]",
                 "Name": "[parameters('skuCode')]"

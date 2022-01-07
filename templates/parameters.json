@@ -8,6 +8,9 @@
         "name": {
             "value": "quality-circle-api"
         },
+        "uiName": {
+            "value": "quality-circle-ui"
+        },
         "location": {
             "value": "Central US"
         },
@@ -21,10 +24,10 @@
             "value": true
         },
         "sku": {
-            "value": "PremiumV2"
+            "value": "Free"
         },
         "skuCode": {
-            "value": "P1v2"
+            "value": "Free"
         },
         "workerSize": {
             "value": "3"
