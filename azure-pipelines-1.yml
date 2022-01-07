@@ -36,6 +36,19 @@ stages:
             projects: '**/*.tests.csproj'
             arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"        
             
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            projects: '*/*.csproj'
+            arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
+
       - job: BuildUI
         displayName: Build UI
         pool:
@@ -68,6 +81,13 @@ stages:
           vmImage: ubuntu-latest
 
         steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'drop'
+            downloadPath: '$(System.ArtifactsDirectory)'
+
         - task: AzureResourceManagerTemplateDeployment@3
           inputs:
             deploymentScope: 'Resource Group'
@@ -80,4 +100,12 @@ stages:
             csmFile: 'templates/template.json'
             csmParametersFile: 'templates/parameters.json'
             deploymentMode: 'Incremental'
+            
+        - task: AzureRmWebAppDeployment@4
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'MPN'
+            appType: 'webAppLinux'
+            WebAppName: 'quality-circle-api'
+            packageForLinux: '$(System.ArtifactsDirectory)/**/api.zip'
           
