@@ -3,6 +3,7 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+name: Azure Demo
 
 trigger:
 - main
@@ -71,6 +72,11 @@ stages:
           inputs:
             customCommand: 'build'
             workingDir: 'client'
+        
+        - script: |
+            cd ./client
+            npm test
+          displayName: Run Tests
 
   - stage: Deploy
     displayName: Deploy Stage
