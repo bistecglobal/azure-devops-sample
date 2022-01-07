@@ -27,3 +27,13 @@ steps:
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+    
+- task: UseNode@1
+  inputs:
+   version: 14.x
+   
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'client'
+    customCommand: 'build'
