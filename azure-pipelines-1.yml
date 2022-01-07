@@ -23,16 +23,26 @@ steps:
    version: 14.x    
   
 - task: DotNetCoreCLI@2
+  displayName: Build .Net
   inputs:
     command: 'build'
     projects: '**/*.csproj'
+    
+- task: DotNetCoreCLI@2
+  displayName: Test .Net
+  inputs:
+    command: 'test'
+    projects: '**/*.tests.csproj'
+    arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
 
 - task: Npm@1
+  displayName: Install node modules
   inputs:
     command: 'install'
     workingDir: 'client'
     
 - task: Npm@1
+  displayName: Build UI
   inputs:
-    command: 'build'
+    customCommand: 'build'
     workingDir: 'client'
