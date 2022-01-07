@@ -9,6 +9,9 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
+  demands:
+        - dotnet
+        - npm
 
 steps:
 - script: echo Hello, world!
