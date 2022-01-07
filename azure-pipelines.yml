@@ -119,6 +119,11 @@ stages:
             WebAppName: 'quality-circle-api'
             packageForLinux: '$(Pipeline.Workspace)/drop/Release/api.zip'
             RuntimeStack: 'DOTNETCORE|6.0'
+        - task: AzureStaticWebApp@0
+          inputs:
+            app_location: 'client'
+            output_location: 'build'
+            azure_static_web_apps_api_token: '$(deployment_token)'
 
 
 
