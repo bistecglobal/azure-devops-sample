@@ -6,34 +6,45 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+  - stage: "Build"
+    jobs:
+      - job: BuildAPI
+        pool:
+          vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+        steps:
+        - script: echo Hello, world!
+          displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+        - script: |
+            echo Add other tasks to build, test, and deploy your project.
+            echo See https://aka.ms/yaml
+          displayName: 'Run a multi-line script'
 
-- task: UseDotNet@2
-  inputs:
-   version: 6.0.x
-   packageType: sdk
+        - task: UseDotNet@2
+          inputs:
+            version: 6.0.x
+            packageType: sdk
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-    
-- task: UseNode@1
-  inputs:
-   version: 14.x
-   
-- task: Npm@1
-  inputs:
-    command: 'custom'
-    workingDir: 'client'
-    customCommand: 'build'
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: 'build'
+            projects: '**/*.csproj'
+           
+
+      - job: BuildUI
+        pool:
+          vmImage: ubuntu-latest
+
+        steps:
+           
+        - task: UseNode@1
+          inputs:
+            version: 14.x
+          
+        - task: Npm@1
+          inputs:
+            command: 'custom'
+            workingDir: 'client'
+            customCommand: 'build'
