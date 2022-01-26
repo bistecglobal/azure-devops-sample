@@ -12,17 +12,29 @@ namespace api
         }
 
         public bool duplicateCode1(int z){
-            var x = 4;
-            var y = x < 5;
+            var x = z;
+            var y = z < 5;
             return y == true;
         }
 
         public bool duplicateCode2(int z){
+            // var x = 4;
+            // var y = x < 5;
+            // return y == true;
+
             var x = 4;
             var y = x < 5;
             return y == true;
         }
 
         private string bad_name_variable { get; set; }
+    }
+
+
+    class MyException : Exception
+    {
+        public MyException(string? message) : base(message)
+        {
+        }
     }
 }
