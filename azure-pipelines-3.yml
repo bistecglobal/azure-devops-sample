@@ -10,6 +10,12 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: UseDotNet@2
+  displayName: Install .Net sdk 6
+  inputs:
+      packageType: "sdk"
+      version: "6.0.x"
+      includePreviewVersions: true
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'sonarcloud'
@@ -17,6 +23,22 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'bistec-demo1'
     projectName: 'bistec-demo1'
+    extraProperties: |
+          sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+    
+- task: DotNetCoreCLI@2
+  displayName: Build .Net projects
+  inputs:
+    command: "build"
+    projects: "**/*.csproj"
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: "test"
+    projects: "**/*.tests.csproj"
+    arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+  displayName: "Run Tests"
+
 - task: SonarCloudAnalyze@1
 - task: SonarCloudPublish@1
   inputs:
