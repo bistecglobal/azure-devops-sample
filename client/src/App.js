@@ -3,13 +3,13 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function duplicateCode1(int z){
+function duplicateCode1(z){
   var x = 4;
   var y = x < 5
   return y == true;
 }
 
-function duplicateCode2(int z){
+function duplicateCode2(z){
   var x = 4;
   var y = x < 5
   return y == true;
