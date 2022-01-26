@@ -1,0 +1,131 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  - master
+
+stages:
+  - stage: "Build"
+    displayName: "Build"
+    jobs:
+      - job: build
+        displayName: build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - script: echo Hello, world!
+          displayName: "Run a one-line script"
+
+        - script: |
+            echo Add other tasks to build, test, and deploy your project.
+            echo See https://aka.ms/yaml
+          displayName: "Run a multi-line script"
+
+        - task: UseDotNet@2
+          displayName: Install .Net sdk 6
+          inputs:
+            packageType: "sdk"
+            version: "6.0.x"
+            includePreviewVersions: true
+           
+        - task: SonarCloudPrepare@1
+          inputs:
+            SonarCloud: 'SonarCloud'
+            organization: 'chan4lk'
+            scannerMode: 'MSBuild'
+            projectKey: 'bistec-quality-circle-demo'
+            projectName: 'bistec-quality-circle-demo'
+            extraProperties: |
+                sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+
+        - task: DotNetCoreCLI@2
+          displayName: Build .Net projects
+          inputs:
+            command: "build"
+            projects: "**/*.csproj"
+
+        - task: DotNetCoreCLI@2
+          inputs:
+            command: "test"
+            projects: "**/*.tests.csproj"
+            arguments: "/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+          displayName: "Run Tests"
+         
+        - task: DotNetCoreCLI@2
+          displayName: Publish Api
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            projects: '**/*.csproj'
+            arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
+        
+        - task: SonarCloudAnalyze@1
+        - task: SonarCloudPublish@1
+          inputs:
+            pollingTimeoutSec: '300'
+
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "14.x"
+          displayName: "Install Node.js"
+
+        - script: |
+            cd ./client
+            npm install
+            npm run build
+          displayName: "npm install and build"
+          
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
+
+  - stage: "Deploy"
+    displayName: "Deploy"
+    dependsOn: Build
+    jobs:
+      - job: Deploy
+        displayName: Deploy
+        pool:
+          vmImage: ubuntu-latest
+        variables:
+          - group: Dev
+        steps:        
+        - download: current
+          artifact: drop
+          
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: Deploy ARM Template
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: 'MPN'
+            subscriptionId: 'f31e1ef4-3413-4efa-9e74-9ce83c808c57'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: 'QualityCircle-Demo'
+            location: 'Central US'
+            templateLocation: 'Linked artifact'
+            csmFile: 'templates/template.json'
+            csmParametersFile: 'templates/parameters.json'
+            deploymentMode: 'Incremental' 
+            
+        - task: AzureRmWebAppDeployment@4
+          displayName: Deploy Api
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'MPN'
+            appType: 'webAppLinux'
+            WebAppName: 'quality-circle-api'
+            packageForLinux: '$(Pipeline.Workspace)/drop/Release/api.zip'
+            RuntimeStack: 'DOTNETCORE|6.0'
+        - task: AzureStaticWebApp@0
+          inputs:
+            app_location: 'client'
+            output_location: 'build'
+            azure_static_web_apps_api_token: '$(deployment_token)'
+
+
+
+

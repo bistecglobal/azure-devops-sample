@@ -10,5 +10,19 @@ namespace api
         {
             return new string [] { "Azure DevOps", "Kubernetes" };
         }
+
+        public bool duplicateCode1(int z){
+            var x = 4;
+            var y = x < 5;
+            return y == true;
+        }
+
+        public bool duplicateCode2(int z){
+            var x = 4;
+            var y = x < 5;
+            return y == true;
+        }
+
+        private string bad_name_variable { get; set; }
     }
 }
