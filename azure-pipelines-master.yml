@@ -30,13 +30,16 @@ stages:
             version: "6.0.x"
             includePreviewVersions: true
            
-        - task: SonarQubePrepare@5
+            
+        - task: SonarCloudPrepare@1
           inputs:
-            SonarQube: 'sonar-hosted'
+            SonarCloud: 'SonarCloud'
+            organization: 'chan4lk'
             scannerMode: 'MSBuild'
-            projectKey: 'devops-demo'
-            projectName: 'devops-demo'
-            extraProperties: 'sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml'
+            projectKey: 'bistec-quality-circle-demo'
+            projectName: 'bistec-quality-circle-demo'
+            extraProperties: |
+                sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
 
         - task: DotNetCoreCLI@2
           displayName: Build .Net projects
@@ -59,11 +62,11 @@ stages:
             projects: '**/*.csproj'
             arguments: '--configuration Release --output $(Build.ArtifactStagingDirectory)/Release'
         
-        - task: SonarQubeAnalyze@5
-        
-        - task: SonarQubePublish@5
+        - task: SonarCloudAnalyze@1
+        - task: SonarCloudPublish@1
           inputs:
             pollingTimeoutSec: '300'
+
 
         - task: NodeTool@0
           inputs:
